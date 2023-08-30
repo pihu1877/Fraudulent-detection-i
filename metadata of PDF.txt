@@ -1,0 +1,59 @@
+metadata of pdf
+
+import fitz
+from datetime import datetime
+
+def format_date_time(date_string):
+    # Check if the string starts with 'D:'
+    if date_string.startswith('D:'):
+        # Remove the 'D:' prefix
+        date_string = date_string[2:]
+        
+        # Convert the date string to a datetime object
+        try:
+            return datetime.strptime(date_string, "%Y%m%d%H%M%S")
+        except ValueError:
+            pass
+
+    return None
+
+def get_pdf_metadata(file_path):
+    with fitz.open(file_path) as doc:
+        metadata = doc.metadata
+
+        # Access individual metadata properties
+        title = metadata.get('title', '')
+        author = metadata.get('author', '')
+        subject = metadata.get('subject', '')
+        keywords = metadata.get('keywords', '')
+        creator = metadata.get('creator', '')
+        producer = metadata.get('producer', '')
+
+        # Get creation date and format it
+        creation_date = metadata.get('creationDate')
+        creation_date_formatted = ''
+        if creation_date:
+            creation_date_obj = format_date_time(creation_date)
+            if creation_date_obj:
+                creation_date_formatted = creation_date_obj.strftime("%Y-%m-%d %H:%M:%S")
+
+        # Get modification date and format it
+        modification_date = metadata.get('modDate')
+        modification_date_formatted = ''
+        if modification_date:
+            modification_date_obj = format_date_time(modification_date)
+            if modification_date_obj:
+                modification_date_formatted = modification_date_obj.strftime("%Y-%m-%d %H:%M:%S")
+
+        # Print the metadata properties
+        print("Title:", title)
+        print("Author:", author)
+        print("Subject:", subject)
+        print("Keywords:", keywords)
+        print("Creator:", creator)
+        print("Producer:", producer)
+        print("Creation Date:", creation_date_formatted)
+        print("Modification Date:", modification_date_formatted)
+# Usage
+file_path = 'C:\\Users\\LCSS\\Bank_Account_Statement.pdf'
+get_pdf_metadata(file_path)
